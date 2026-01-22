@@ -1,2 +1,4 @@
-package com.nic.desafioitau.transacao 
+package com.nic.desafioitau.transacao
 
+class TransacaoService {
+}

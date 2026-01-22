@@ -1,1 +1,32 @@
-services: { }
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # Alterado de 'mongo' para 'mongosh'
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: desafio-itau-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      # Sintaxe recomendada para clareza
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/desafioitau
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
